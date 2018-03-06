@@ -42,6 +42,8 @@ interface ParentRect {
   y: number;
 };
 
+const HANDLER = ['nw', 'ne', 'sw', 'se'];
+
 class TransformControl extends PureComponent<IProps, IState> {
   componentElement: HTMLDivElement;
   evData: EvData;
@@ -97,16 +99,17 @@ class TransformControl extends PureComponent<IProps, IState> {
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
     return !disabled ? (
-      <div className="transform_drag_element">
-        <div className="transform_drag_handle left_top" />
-        <div className="transform_drag_handle left_bottom" />
-        <div className="transform_drag_handle right_top" />
-        <div className="transform_drag_handle right_bottom" />
-
-        <div className="transform_rotate_handle nw" />
-        <div className="transform_rotate_handle ne" />
-        <div className="transform_rotate_handle sw" />
-        <div className="transform_rotate_handle se" />
+      <div
+        className="transform_drag_element"
+        onMouseDown={this.onControlMouseTouchDown}
+        onTouchStart={this.onControlMouseTouchDown}
+      >
+        {HANDLER.map((v) => (
+          <div className={`transform_drag_handle drag_${v}`} key={`drag${v}`} />
+        ))}
+        {HANDLER.map((v) => (
+           <div className={`transform_rotate_handle ${v}`} key={`rotate${v}`} />
+        ))}
       </div>
     ) : null;
   };
@@ -129,6 +132,16 @@ class TransformControl extends PureComponent<IProps, IState> {
 
     this.isMouseDownorTouchDown = true;
   };
+
+  onControlMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>) => {
+    const { disabled, rectbound } = this.props;
+    if (disabled) {
+      return;
+    }
+    e.stopPropagation();
+    e.preventDefault();
+    console.log(rectbound);
+  }
 
   onDocMouseTouchMove = (e: any) => {
     const { disabled, onChange } = this.props;
