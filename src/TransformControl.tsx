@@ -1,7 +1,12 @@
-import React, { PureComponent, ReactNode, SyntheticEvent } from "react";
-import getClientPos from '../utils/getClientPos';
+/**
+ * TransformControl
+ * A Lightweight rect Transform control for React
+ */
 
-import './style.css';
+import React, { PureComponent, ReactNode, SyntheticEvent } from "react";
+import getClientPos from "../utils/getClientPos";
+
+import "./style.css";
 
 interface RectBound {
   x: number;
@@ -18,8 +23,7 @@ interface IProps {
   [propName: string]: any;
 }
 
-interface IState {
-}
+interface IState {}
 
 interface EvData {
   dragStartMouseX: number;
@@ -30,33 +34,58 @@ interface EvData {
   diffY?: number;
 }
 
-class TransformControl extends PureComponent<IProps, IState> {
+interface ParentRect {
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+}
 
+class TransformControl extends PureComponent<IProps, IState> {
   componentElement: HTMLDivElement;
   evData: EvData;
   isMouseDownorTouchDown: boolean;
   containerWidth: number;
   containerHeight: number;
+  parentWidth: number;
+  parentHeight: number;
+  parentNode: any;
+  parentRectBound: ParentRect;
 
   componentDidMount() {
-    document.addEventListener('mousemove', this.onDocMouseTouchMove);
-    document.addEventListener('touchmove', this.onDocMouseTouchMove);
+    document.addEventListener("mousemove", this.onDocMouseTouchMove);
+    document.addEventListener("touchmove", this.onDocMouseTouchMove);
 
-    document.addEventListener('mouseup', this.onDocMouseTouchEnd);
-    document.addEventListener('touchend', this.onDocMouseTouchEnd);
-    document.addEventListener('touchcancel', this.onDocMouseTouchEnd);
+    document.addEventListener("mouseup", this.onDocMouseTouchEnd);
+    document.addEventListener("touchend", this.onDocMouseTouchEnd);
+    document.addEventListener("touchcancel", this.onDocMouseTouchEnd);
 
     const { width, height } = this.componentElement.getBoundingClientRect();
     this.containerWidth = width;
     this.containerHeight = height;
+
+    this.parentNode = this.componentElement.parentNode;
+    if (!this.parentNode) {
+      throw new Error("parentNode is null!");
+    }
+
+    const parentRect = this.parentNode.getBoundingClientRect();
+    this.parentRectBound = {
+      x: parentRect.left,
+      y: parentRect.top,
+      w: parentRect.width,
+      h: parentRect.height
+    };
   }
 
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
-    return !disabled ? <div>
-      <button>x</button>
-    </div> : null;
-  }
+    return !disabled ? (
+      <div style={{ position: 'absolute' }}>
+        <button>x</button>
+      </div>
+    ) : null;
+  };
 
   onComponentMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>) => {
     const { disabled, rectbound } = this.props;
@@ -71,11 +100,11 @@ class TransformControl extends PureComponent<IProps, IState> {
       dragStartMouseX: clientPos.x,
       dragStartMouseY: clientPos.y,
       childrenStartX: rectbound.x,
-      childrenStartY: rectbound.y,
-    }
+      childrenStartY: rectbound.y
+    };
 
     this.isMouseDownorTouchDown = true;
-  }
+  };
 
   onDocMouseTouchMove = (e: any) => {
     const { disabled, onChange } = this.props;
@@ -88,36 +117,45 @@ class TransformControl extends PureComponent<IProps, IState> {
 
     e.preventDefault();
 
-    // const { evData } = this;
-    // const clientPos = getClientPos(e);
-    // evData.diffX = clientPos.x - evData.dragStartMouseX;
-    // evData.diffY = clientPos.y - evData.dragStartMouseY;
     const nextRectBound = this.computedRectBound(e);
     onChange(nextRectBound);
-  }
+  };
 
   onDocMouseTouchEnd = (e: any) => {
     const { onComplete } = this.props;
-    if (onComplete) {
+    if (onComplete && this.isMouseDownorTouchDown) {
       const nextRectBound = this.computedRectBound(e);
       onComplete(nextRectBound);
     }
     this.isMouseDownorTouchDown = false;
-  }
+  };
 
   computedRectBound = (e: any) => {
     const { rectbound } = this.props;
-    const { evData } = this;
+    const { evData, parentRectBound } = this;
     const clientPos = getClientPos(e);
     evData.diffX = clientPos.x - evData.dragStartMouseX;
     evData.diffY = clientPos.y - evData.dragStartMouseY;
+
+    const x = evData.diffX + evData.childrenStartX;
+    const y = evData.diffY + evData.childrenStartY;
     const nextRectBound = {
       ...rectbound,
-      x: evData.diffX + evData.childrenStartX,
-      y: evData.diffY + evData.childrenStartY,
+      x:
+        x <= parentRectBound.x
+          ? parentRectBound.x
+          : x >= parentRectBound.x + parentRectBound.w - this.containerWidth
+            ? parentRectBound.x + parentRectBound.w - this.containerWidth
+            : x,
+      y:
+        y <= parentRectBound.y
+          ? parentRectBound.y
+          : y >= parentRectBound.y + parentRectBound.h - this.containerHeight
+            ? parentRectBound.y + parentRectBound.h - this.containerHeight
+            : y
     };
     return nextRectBound;
-  }
+  };
 
   mergeStyles = (rectbound: RectBound): object => {
     const { w, h, x, y } = rectbound;
@@ -125,9 +163,9 @@ class TransformControl extends PureComponent<IProps, IState> {
       width: `${w}px`,
       height: `${h}px`,
       left: `${x}px`,
-      top: `${y}px`,
+      top: `${y}px`
     };
-  }
+  };
 
   render(): ReactNode {
     const { children, rectbound } = this.props;
@@ -138,7 +176,7 @@ class TransformControl extends PureComponent<IProps, IState> {
     return (
       <div
         className="transform_container"
-        style={{...styles}}
+        style={{ ...styles }}
         ref={(ele: HTMLDivElement) => (this.componentElement = ele)}
         onTouchStart={this.onComponentMouseTouchDown}
         onMouseDown={this.onComponentMouseTouchDown}

@@ -1,3 +1,9 @@
 .transform_container {
   position: absolute;
+  overflow: hidden;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
 }

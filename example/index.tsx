@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+import { render } from 'react-dom';
 import styled from 'styled-components';
 
-import { storiesOf } from '@storybook/react';
 import TransformControl from '../src/TransformControl';
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Container = styled.div`
   background-color: #F0F0F0;
 `;
 
-class Demo extends React.PureComponent {
+class App extends PureComponent {
   state = {
     rectbound: {
       x: 50,
@@ -39,4 +39,7 @@ class Demo extends React.PureComponent {
   }
 }
 
-storiesOf('transform', module).add('to TransformControl', () => <Demo />);
+render(
+  <App />,
+  document.querySelector('#root')
+);
