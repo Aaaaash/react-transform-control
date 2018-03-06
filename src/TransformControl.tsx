@@ -62,7 +62,6 @@ class TransformControl extends PureComponent<IProps, IState> {
     document.addEventListener("mouseup", this.onDocMouseTouchEnd);
     document.addEventListener("touchend", this.onDocMouseTouchEnd);
     document.addEventListener("touchcancel", this.onDocMouseTouchEnd);
-
     
     const { children } = this.props;
     if (children.type === 'img') {
@@ -99,13 +98,14 @@ class TransformControl extends PureComponent<IProps, IState> {
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
     return !disabled ? (
-      <div
-        className="transform_drag_element"
-        onMouseDown={this.onControlMouseTouchDown}
-        onTouchStart={this.onControlMouseTouchDown}
-      >
+      <div className="transform_drag_element">
         {HANDLER.map((v) => (
-          <div className={`transform_drag_handle drag_${v}`} key={`drag${v}`} />
+          <div
+            className={`transform_drag_handle drag_${v}`}
+            key={`drag${v}`}
+            onMouseDown={this.onScaleMouseTouchDown}
+            onTouchStart={this.onScaleMouseTouchDown}
+          />
         ))}
         {HANDLER.map((v) => (
            <div className={`transform_rotate_handle ${v}`} key={`rotate${v}`} />
@@ -133,7 +133,7 @@ class TransformControl extends PureComponent<IProps, IState> {
     this.isMouseDownorTouchDown = true;
   };
 
-  onControlMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>) => {
+  onScaleMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>) => {
     const { disabled, rectbound } = this.props;
     if (disabled) {
       return;
@@ -206,7 +206,6 @@ class TransformControl extends PureComponent<IProps, IState> {
 
   render(): ReactNode {
     const { children, rectbound } = this.props;
-
     const styles = this.mergeStyles(rectbound);
     const controlSelection = this.createControlSelection();
 

@@ -6,6 +6,7 @@
   "repository": "https://github.com/SakuraAsh/react-transform-control.git",
   "author": "sakuraash <841105127@qq.com>",
   "license": "MIT",
+  "files": [ "lib" ],
   "dependencies": {
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",
@@ -25,6 +26,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "example": "parcel example/index.html"
+    "example": "parcel example/index.html",
+    "build": "parcel build src/TransformControl.tsx --out-dir lib"
   }
 }
