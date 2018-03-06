@@ -5,9 +5,12 @@ import { storiesOf } from '@storybook/react';
 import TransformControl from '../src/TransformControl';
 
 const Container = styled.div`
-  width: 500px;
-  height: 500px;
-  position: relative;
+  width: 533px;
+  height: 300px;
+  position: absolute;
+  left: 20px;
+  top: 28px;
+  z-index: 1;
   background-color: #F0F0F0;
 `;
 

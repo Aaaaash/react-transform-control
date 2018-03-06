@@ -40,9 +40,9 @@ interface ParentRect {
   h: number;
   x: number;
   y: number;
-};
+}
 
-const HANDLER = ['nw', 'ne', 'sw', 'se'];
+const HANDLER = ["nw", "ne", "sw", "se"];
 
 class TransformControl extends PureComponent<IProps, IState> {
   componentElement: HTMLDivElement;
@@ -62,9 +62,9 @@ class TransformControl extends PureComponent<IProps, IState> {
     document.addEventListener("mouseup", this.onDocMouseTouchEnd);
     document.addEventListener("touchend", this.onDocMouseTouchEnd);
     document.addEventListener("touchcancel", this.onDocMouseTouchEnd);
-    
+
     const { children } = this.props;
-    if (children.type === 'img') {
+    if (children.type === "img") {
       const { src } = children.props;
       if (src) {
         const img = new Image();
@@ -93,13 +93,13 @@ class TransformControl extends PureComponent<IProps, IState> {
     const { width, height } = this.componentElement.getBoundingClientRect();
     this.containerWidth = width;
     this.containerHeight = height;
-  }
+  };
 
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
     return !disabled ? (
       <div className="transform_drag_element">
-        {HANDLER.map((v) => (
+        {HANDLER.map(v => (
           <div
             className={`transform_drag_handle drag_${v}`}
             key={`drag${v}`}
@@ -107,8 +107,8 @@ class TransformControl extends PureComponent<IProps, IState> {
             onTouchStart={this.onScaleMouseTouchDown}
           />
         ))}
-        {HANDLER.map((v) => (
-           <div className={`transform_rotate_handle ${v}`} key={`rotate${v}`} />
+        {HANDLER.map(v => (
+          <div className={`transform_rotate_handle ${v}`} key={`rotate${v}`} />
         ))}
       </div>
     ) : null;
@@ -141,7 +141,7 @@ class TransformControl extends PureComponent<IProps, IState> {
     e.stopPropagation();
     e.preventDefault();
     console.log(rectbound);
-  }
+  };
 
   onDocMouseTouchMove = (e: any) => {
     const { disabled, onChange } = this.props;
@@ -173,22 +173,22 @@ class TransformControl extends PureComponent<IProps, IState> {
     const clientPos = getClientPos(e);
     evData.diffX = clientPos.x - evData.dragStartMouseX;
     evData.diffY = clientPos.y - evData.dragStartMouseY;
-
+    console.log(parentRectBound);
     const x = evData.diffX + evData.childrenStartX;
     const y = evData.diffY + evData.childrenStartY;
     const nextRectBound = {
       ...rectbound,
       x:
-        x <= parentRectBound.x
-          ? parentRectBound.x
-          : x >= parentRectBound.x + parentRectBound.w - this.containerWidth
-            ? parentRectBound.x + parentRectBound.w - this.containerWidth
+        x <= 0
+          ? 0
+          : x >= parentRectBound.w - this.containerWidth
+            ? parentRectBound.w - this.containerWidth
             : x,
       y:
-        y <= parentRectBound.y
-          ? parentRectBound.y
-          : y >= parentRectBound.y + parentRectBound.h - this.containerHeight
-            ? parentRectBound.y + parentRectBound.h - this.containerHeight
+        y <= 0
+          ? 0
+          : y >= parentRectBound.h - this.containerHeight
+            ? parentRectBound.h - this.containerHeight
             : y
     };
     return nextRectBound;

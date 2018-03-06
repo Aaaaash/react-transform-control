@@ -5,9 +5,11 @@ import styled from 'styled-components';
 import TransformControl from '../src/TransformControl';
 
 const Container = styled.div`
-  width: 500px;
-  height: 500px;
+  width: 533px;
+  height: 300px;
   position: relative;
+  margin: 100px auto;
+  z-index: 1;
   background-color: #F0F0F0;
 `;
 
@@ -16,26 +18,26 @@ class App extends PureComponent {
     rectbound: {
       x: 50,
       y: 50,
-      w: 100,
-      h: 100,
     }
   }
 
   render() {
     const { rectbound } = this.state;
-    return (<Container>
-      <TransformControl
-        rectbound={rectbound}
-        onChange={(value: any) => {
-          this.setState({ rectbound: value });
-        }}
-        onComplete={(data: any) => {
-          console.log(data);
-        }}
-      >
-        <img src="http://img2.imgtn.bdimg.com/it/u=1685264678,4210999084&fm=27&gp=0.jpg" alt="" />
-      </TransformControl>
-    </Container>);
+    return (
+      <Container>
+        <TransformControl
+          rectbound={rectbound}
+          onChange={(value: any) => {
+            this.setState({ rectbound: value });
+          }}
+          onComplete={(data: any) => {
+            console.log(data);
+          }}
+        >
+          <div style={{ width: 120, height: 30, backgroundColor: '#ff004f' }}>hello</div>
+        </TransformControl>
+      </Container>
+    );
   }
 }
 
