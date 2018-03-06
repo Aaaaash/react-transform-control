@@ -97,8 +97,16 @@ class TransformControl extends PureComponent<IProps, IState> {
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
     return !disabled ? (
-      <div style={{ position: 'absolute' }}>
-        <button>x</button>
+      <div className="transform_drag_element">
+        <div className="transform_drag_handle left_top" />
+        <div className="transform_drag_handle left_bottom" />
+        <div className="transform_drag_handle right_top" />
+        <div className="transform_drag_handle right_bottom" />
+
+        <div className="transform_rotate_handle nw" />
+        <div className="transform_rotate_handle ne" />
+        <div className="transform_rotate_handle sw" />
+        <div className="transform_rotate_handle se" />
       </div>
     ) : null;
   };
