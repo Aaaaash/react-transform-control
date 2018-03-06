@@ -1,8 +1,15 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import { storiesOf } from '@storybook/react';
 import TransformControl from '../src/TransformControl';
-// const TransformControl = impo('../dist/TransformControl');
-// import TransformControl from '../dist/TransformControl';
 
-storiesOf('Welcome', module).add('to Storybook', () => <TransformControl />);
+const Container = styled.div`
+  width: 500px;
+  height: 500px;
+  background-color: #F0F0F0;
+`;
+
+storiesOf('transform', module).add('to TransformControl', () => <Container>
+  <TransformControl />
+</Container>);
