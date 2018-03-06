@@ -2,8 +2,8 @@
  * TransformControl
  * A Lightweight rect Transform control for React
  */
-
-import React, { PureComponent, ReactNode, SyntheticEvent } from "react";
+import * as React from "react";
+import { PureComponent, ReactNode, SyntheticEvent } from "react";
 import getClientPos from "../utils/getClientPos";
 
 import "./style.css";
