@@ -1,12 +1,12 @@
 {
   "name": "react-transform-control",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Lightweight rect Transform control for React",
   "main": "index.js",
   "repository": "https://github.com/SakuraAsh/react-transform-control.git",
   "author": "sakuraash <841105127@qq.com>",
   "license": "MIT",
-  "files": [ "lib" ],
+  "files": [ "lib", "src", "utils" ],
   "dependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
@@ -27,6 +27,6 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "example": "parcel example/index.html",
-    "build": "parcel build src/TransformControl.tsx --out-dir lib"
+    "build": "tsc src/TransformControl.tsx --outDir lib"
   }
 }

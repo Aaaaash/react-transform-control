@@ -1,2 +1,2 @@
-module.exports = require('./lib/TransformControl');
-exports.default = require('./lib/TransformControl');
+module.exports = require('./lib/src/TransformControl');
+exports.default = require('./lib/src/TransformControl');

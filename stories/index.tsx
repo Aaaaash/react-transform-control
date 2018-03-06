@@ -33,6 +33,7 @@ class Demo extends React.PureComponent {
       >
         {/* <img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1139288478,599225693&fm=15&gp=0.jpg" alt="" /> */}
         <div style={{ width: 120, height: 30, backgroundColor: '#ff004f' }}>hello</div>
+        <div>ceshi</div>
       </TransformControl>
     </Container>);
   }
