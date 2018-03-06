@@ -16,8 +16,6 @@ class Demo extends React.PureComponent {
     rectbound: {
       x: 50,
       y: 50,
-      w: 100,
-      h: 100,
     }
   }
 

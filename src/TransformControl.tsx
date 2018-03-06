@@ -11,8 +11,8 @@ import "./style.css";
 interface RectBound {
   x: number;
   y: number;
-  w: number;
-  h: number;
+  w?: number;
+  h?: number;
 }
 
 interface IProps {
@@ -20,6 +20,7 @@ interface IProps {
   onComplete?: Function;
   rectbound: RectBound;
   onChange: Function;
+  children: any;
   [propName: string]: any;
 }
 
@@ -39,7 +40,7 @@ interface ParentRect {
   h: number;
   x: number;
   y: number;
-}
+};
 
 class TransformControl extends PureComponent<IProps, IState> {
   componentElement: HTMLDivElement;
@@ -60,9 +61,18 @@ class TransformControl extends PureComponent<IProps, IState> {
     document.addEventListener("touchend", this.onDocMouseTouchEnd);
     document.addEventListener("touchcancel", this.onDocMouseTouchEnd);
 
-    const { width, height } = this.componentElement.getBoundingClientRect();
-    this.containerWidth = width;
-    this.containerHeight = height;
+    
+    const { children } = this.props;
+    if (children.type === 'img') {
+      const { src } = children.props;
+      if (src) {
+        const img = new Image();
+        img.onload = this.initialComponentRect;
+        img.src = src;
+      }
+    } else {
+      this.initialComponentRect();
+    }
 
     this.parentNode = this.componentElement.parentNode;
     if (!this.parentNode) {
@@ -76,6 +86,12 @@ class TransformControl extends PureComponent<IProps, IState> {
       w: parentRect.width,
       h: parentRect.height
     };
+  }
+
+  initialComponentRect = () => {
+    const { width, height } = this.componentElement.getBoundingClientRect();
+    this.containerWidth = width;
+    this.containerHeight = height;
   }
 
   createControlSelection = (): ReactNode => {
