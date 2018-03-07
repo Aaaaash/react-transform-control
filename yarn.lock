@@ -5668,6 +5668,13 @@ react-style-proptype@^3.0.0:
   dependencies:
     prop-types "^15.5.4"
 
+react-transform-control@^1.0.1:
+  version "1.0.1"
+  resolved "http://registry.npm.taobao.org/react-transform-control/download/react-transform-control-1.0.1.tgz#efab249e880a24c4c6467b68243d0ea93a6d88e4"
+  dependencies:
+    react "^16.2.0"
+    react-dom "^16.2.0"
+
 react-transition-group@^1.1.2:
   version "1.2.1"
   resolved "http://registry.npm.taobao.org/react-transition-group/download/react-transition-group-1.2.1.tgz#e11f72b257f921b213229a774df46612346c7ca6"

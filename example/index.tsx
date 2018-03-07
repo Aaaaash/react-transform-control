@@ -33,7 +33,7 @@ class App extends PureComponent {
   }
   
   handleComplete = (data: any) => {
-    console.log(data);
+    // console.log(data);
   }
 
   handleTextChange = (value: string) => {
