@@ -1,6 +1,6 @@
 {
   "name": "react-transform-control",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A Lightweight rect Transform control for React",
   "main": "index.js",
   "repository": "https://github.com/SakuraAsh/react-transform-control.git",
