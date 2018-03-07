@@ -136,8 +136,8 @@ class TransformControl extends PureComponent<IProps, IState> {
     this.evData = {
       dragStartMouseX: clientPos.x,
       dragStartMouseY: clientPos.y,
-      childrenStartX: this.xInversed ? (this.containerWidth + rectbound.x) : rectbound.x,
-      childrenStartY: this.yInversed ? (this.containerHeight + rectbound.y) : rectbound.y,
+      childrenStartX: rectbound.x,
+      childrenStartY: rectbound.y,
       childrenStartW: this.containerWidth,
       childrenStartH: this.containerHeight,
       diffX: 0,
@@ -164,7 +164,8 @@ class TransformControl extends PureComponent<IProps, IState> {
    * 缩放鼠标/触摸按下事件
    */
   onScaleMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>, state: string) => {
-    const { disabled } = this.props;
+    const { disabled, rectbound } = this.props;
+    console.log('?');
     if (disabled) {
       return;
     }
@@ -175,6 +176,12 @@ class TransformControl extends PureComponent<IProps, IState> {
     this.scaleState = state;
     this.xInversed = state === 'nw' || state === 'w' || state === 'sw';
     this.yInversed = state === 'nw' || state === 'n' || state === 'ne';
+    if (this.xInversed) {
+      this.evData.childrenStartX = this.containerWidth + rectbound.x;
+    }
+    if (this.yInversed) {
+      this.evData.childrenStartY = this.containerHeight + rectbound.y;
+    }
     this.initialEvData(e);
   };
 
@@ -203,10 +210,7 @@ class TransformControl extends PureComponent<IProps, IState> {
       onChange(nextRectBound);
     } else {
       const nextRectBound = this.computedScaleRectBound(e);
-      console.log(nextRectBound);
-      // this.evData.childrenStartW
       onChange(nextRectBound);
-      // console.log(nextRectBound);
     }
   };
 
@@ -250,6 +254,7 @@ class TransformControl extends PureComponent<IProps, IState> {
    * xInversed与yInversed同时为true, 表示缩放时需同时改变x与y坐标
    */
   computedScaleRectBound = (e: any) => {
+    console.log('?');
     const aspect = this.containerWidth / this.containerHeight; // 长宽比
     const { rectbound } = this.props;
     if (this.xInversed) {
@@ -270,7 +275,7 @@ class TransformControl extends PureComponent<IProps, IState> {
     let newY = this.evData.childrenStartY;
     
     if (this.xInversed) {
-      newX = e.pageX - this.evData.dragStartMouseX + (this.evData.childrenStartX - this.containerWidth);
+      newX = this.evData.childrenStartX + (this.evData.childrenStartW - newWidth);
     }
 
     if (this.yInversed) {
@@ -281,6 +286,9 @@ class TransformControl extends PureComponent<IProps, IState> {
       }
     }
     this.lastYinversed = this.yInversed;
+    // console.log(newX);
+    // 
+    // <= 0 ? 0 : newY + newHeight >= 300 ? 300 : newY
     return {
       ...rectbound,
       x: newX,
