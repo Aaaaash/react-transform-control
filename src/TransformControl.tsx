@@ -11,8 +11,8 @@ import "./style.css";
 interface RectBound {
   x: number;
   y: number;
-  w?: number;
-  h?: number;
+  w?: number | string;
+  h?: number | string;
 }
 
 interface IProps {
@@ -50,8 +50,6 @@ class TransformControl extends PureComponent<IProps, IState> {
   isMouseDownorTouchDown: boolean;
   containerWidth: number;
   containerHeight: number;
-  parentWidth: number;
-  parentHeight: number;
   parentNode: any;
   parentRectBound: ParentRect;
 
@@ -202,22 +200,33 @@ class TransformControl extends PureComponent<IProps, IState> {
   mergeStyles = (rectbound: RectBound): object => {
     const { w, h, x, y } = rectbound;
     return {
-      width: `${w}px`,
-      height: `${h}px`,
+      width: w,
+      height: h,
       left: `${x}px`,
       top: `${y}px`
     };
   };
 
+  public shouldPassiveUpdate = () => {
+    const { width, height } = this.componentElement.getBoundingClientRect();
+    this.containerWidth = width;
+    this.containerHeight = height;
+  }
+
   render(): ReactNode {
-    const { children, rectbound } = this.props;
+    const { children, rectbound, innerRef, onClick } = this.props;
     const styles = this.mergeStyles(rectbound);
     const controlSelection = this.createControlSelection();
+
+    if (innerRef) {
+      innerRef(this);
+    }
 
     return (
       <div
         className="transform_container"
         style={{ ...styles }}
+        onClick={onClick}
         onDoubleClick={(e) => e.stopPropagation()}
         ref={(ele: HTMLDivElement) => (this.componentElement = ele)}
         onTouchStart={this.onComponentMouseTouchDown}

@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import styled from 'styled-components';
 
 import TransformControl from '../src/TransformControl';
+import Subtitle from './Text';
+
 
 const Container = styled.div`
   width: 533px;
@@ -16,9 +18,27 @@ const Container = styled.div`
 class App extends PureComponent {
   state = {
     rectbound: {
-      x: 50,
+      x: 0,
       y: 50,
-    }
+    },
+    text: 'hello world',
+    edit: false,
+  }
+
+  control: any;
+
+  handleChange = (value: any) => {
+    // console.log(value);
+    this.setState({ rectbound: value });
+  }
+  
+  handleComplete = (data: any) => {
+    console.log(data);
+  }
+
+  handleTextChange = (value: string) => {
+    this.setState({ text: value })
+    this.control.shouldPassiveUpdate();
   }
 
   render() {
@@ -27,20 +47,19 @@ class App extends PureComponent {
       <Container>
         <TransformControl
           rectbound={rectbound}
-          onChange={(value: any) => {
-            this.setState({ rectbound: value });
+          onChange={this.handleChange}
+          onComplete={this.handleComplete}
+          onClick={() => {
+            this.setState({ edit: true });
           }}
-          onComplete={(data: any) => {
-            console.log(data);
-          }}
+          innerRef={(ref: any) => (this.control = ref)}
+          disabled={!this.state.edit}
         >
-          <div
-            onDoubleClick={(e: any) => {
-              e.stopPropagation();
-              e.preventDefault();
-              console.log('doubleClick');
-            }}
-            style={{ width: 120, height: 30, backgroundColor: '#ff004f' }}
+          <Subtitle
+            styles={{}}
+            color="#ff004f"
+            text={this.state.text}
+            onChange={this.handleTextChange}
           />
         </TransformControl>
       </Container>
