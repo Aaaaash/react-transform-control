@@ -251,7 +251,6 @@ class TransformControl extends PureComponent<IProps, IState> {
    */
   computedScaleRectBound = (e: any) => {
     const aspect = this.containerWidth / this.containerHeight; // 长宽比
-    // console.log(this.evData.childrenStartH, this.evData.childrenStartW);
     const { rectbound } = this.props;
     if (this.xInversed) {
       this.evData.diffX -= this.evData.childrenStartW * 2;
