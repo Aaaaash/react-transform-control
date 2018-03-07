@@ -34,7 +34,14 @@ class App extends PureComponent {
             console.log(data);
           }}
         >
-          <div style={{ width: 120, height: 30, backgroundColor: '#ff004f' }}>hello</div>
+          <div
+            onDoubleClick={(e: any) => {
+              e.stopPropagation();
+              e.preventDefault();
+              console.log('doubleClick');
+            }}
+            style={{ width: 120, height: 30, backgroundColor: '#ff004f' }}
+          />
         </TransformControl>
       </Container>
     );

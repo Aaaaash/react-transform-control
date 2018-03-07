@@ -98,8 +98,14 @@ class TransformControl extends PureComponent<IProps, IState> {
   createControlSelection = (): ReactNode => {
     const { disabled } = this.props;
     return !disabled ? (
-      <div className="transform_drag_element">
-        {HANDLER.map(v => (
+      <div
+        className="transform_drag_element"
+        onDoubleClick={(e) => e.stopPropagation()}
+      >
+        {HANDLER.map((v: string) => (
+          <p className={`transform_line line_${v}`} key={v} />
+        ))}
+        {HANDLER.map((v: string) => (
           <div
             className={`transform_drag_handle drag_${v}`}
             key={`drag${v}`}
@@ -107,7 +113,7 @@ class TransformControl extends PureComponent<IProps, IState> {
             onTouchStart={this.onScaleMouseTouchDown}
           />
         ))}
-        {HANDLER.map(v => (
+        {HANDLER.map((v: string) => (
           <div className={`transform_rotate_handle ${v}`} key={`rotate${v}`} />
         ))}
       </div>
@@ -173,7 +179,6 @@ class TransformControl extends PureComponent<IProps, IState> {
     const clientPos = getClientPos(e);
     evData.diffX = clientPos.x - evData.dragStartMouseX;
     evData.diffY = clientPos.y - evData.dragStartMouseY;
-    console.log(parentRectBound);
     const x = evData.diffX + evData.childrenStartX;
     const y = evData.diffY + evData.childrenStartY;
     const nextRectBound = {
@@ -213,6 +218,7 @@ class TransformControl extends PureComponent<IProps, IState> {
       <div
         className="transform_container"
         style={{ ...styles }}
+        onDoubleClick={(e) => e.stopPropagation()}
         ref={(ele: HTMLDivElement) => (this.componentElement = ele)}
         onTouchStart={this.onComponentMouseTouchDown}
         onMouseDown={this.onComponentMouseTouchDown}
