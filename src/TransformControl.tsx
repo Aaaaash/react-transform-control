@@ -5,7 +5,6 @@
 import * as React from "react";
 import { PureComponent, ReactNode, SyntheticEvent } from "react";
 import getClientPos from "../utils/getClientPos";
-import clamp from "../utils/clamp";
 
 import "./style.css";
 
@@ -22,6 +21,8 @@ interface IProps {
   rectbound: RectBound;
   onChange: Function;
   children: any;
+  maxWidth: number;
+  maxHeight: number;
   [propName: string]: any;
 }
 
@@ -36,6 +37,8 @@ interface EvData {
   childrenStartH: number;
   diffX: number;
   diffY: number;
+  rightPadding: number;
+  bottomPadding: number;
 }
 
 interface ParentRect {
@@ -59,7 +62,7 @@ class TransformControl extends PureComponent<IProps, IState> {
   scaleState: string;
   xInversed: boolean;
   yInversed: boolean;
-  lastYinversed: boolean;
+  aspect: number;
 
   componentDidMount() {
     document.addEventListener("mousemove", this.onDocMouseTouchMove);
@@ -99,6 +102,7 @@ class TransformControl extends PureComponent<IProps, IState> {
     const { width, height } = this.componentElement.getBoundingClientRect();
     this.containerWidth = width;
     this.containerHeight = height;
+    this.aspect = width / height;
   };
 
   /**
@@ -130,7 +134,7 @@ class TransformControl extends PureComponent<IProps, IState> {
   };
 
   initialEvData = (e: any) => {
-    const { rectbound } = this.props;
+    const { rectbound, maxWidth, maxHeight } = this.props;
     const clientPos = getClientPos(e);
     this.initialComponentRect();
     this.evData = {
@@ -140,6 +144,8 @@ class TransformControl extends PureComponent<IProps, IState> {
       childrenStartY: rectbound.y,
       childrenStartW: this.containerWidth,
       childrenStartH: this.containerHeight,
+      rightPadding: maxWidth - this.containerWidth - rectbound.x,
+      bottomPadding: maxHeight - this.containerHeight - rectbound.y,
       diffX: 0,
       diffY: 0,
     };
@@ -164,24 +170,18 @@ class TransformControl extends PureComponent<IProps, IState> {
    * 缩放鼠标/触摸按下事件
    */
   onScaleMouseTouchDown = (e: SyntheticEvent<HTMLDivElement>, state: string) => {
-    const { disabled, rectbound } = this.props;
-    console.log('?');
+    const { disabled } = this.props;
     if (disabled) {
       return;
     }
     e.stopPropagation();
     e.preventDefault();
+
     this.isMouseDownorTouchDown = true;
     this.isScale = true;
     this.scaleState = state;
     this.xInversed = state === 'nw' || state === 'w' || state === 'sw';
     this.yInversed = state === 'nw' || state === 'n' || state === 'ne';
-    if (this.xInversed) {
-      this.evData.childrenStartX = this.containerWidth + rectbound.x;
-    }
-    if (this.yInversed) {
-      this.evData.childrenStartY = this.containerHeight + rectbound.y;
-    }
     this.initialEvData(e);
   };
 
@@ -254,9 +254,7 @@ class TransformControl extends PureComponent<IProps, IState> {
    * xInversed与yInversed同时为true, 表示缩放时需同时改变x与y坐标
    */
   computedScaleRectBound = (e: any) => {
-    console.log('?');
-    const aspect = this.containerWidth / this.containerHeight; // 长宽比
-    const { rectbound } = this.props;
+    const { rectbound, maxWidth, maxHeight } = this.props;
     if (this.xInversed) {
       this.evData.diffX -= this.evData.childrenStartW * 2;
     }
@@ -268,27 +266,76 @@ class TransformControl extends PureComponent<IProps, IState> {
       newWidth = Math.abs(newWidth);
     }
 
-    newWidth = clamp(newWidth, 0, 533);
-    let newHeight = newWidth / aspect;
+    let newHeight = newWidth / this.aspect;
 
     let newX = this.evData.childrenStartX;
     let newY = this.evData.childrenStartY;
-    
+
     if (this.xInversed) {
       newX = this.evData.childrenStartX + (this.evData.childrenStartW - newWidth);
     }
 
     if (this.yInversed) {
-      if (!this.lastYinversed) {
-        newY = this.evData.childrenStartY - newHeight;
-      } else {
-        newY = this.evData.childrenStartY + (this.evData.childrenStartH - newHeight);
+      newY = this.evData.childrenStartY + (this.evData.childrenStartH - newHeight);
+    }
+
+    // 右下角
+    if (!this.xInversed && !this.yInversed) {
+      if (newWidth + this.evData.childrenStartX >= maxWidth) {
+        newWidth = maxWidth - this.evData.childrenStartX;
+        newHeight = newWidth / this.aspect;
+      }
+      if (newHeight + this.evData.childrenStartY >= maxHeight) {
+        newHeight = maxHeight - this.evData.childrenStartY;
+        newWidth = newHeight * this.aspect;
       }
     }
-    this.lastYinversed = this.yInversed;
-    // console.log(newX);
-    // 
-    // <= 0 ? 0 : newY + newHeight >= 300 ? 300 : newY
+
+    // 左下角
+    if (this.xInversed && !this.yInversed) {
+      if (newWidth + this.evData.rightPadding >= maxWidth) {
+        newWidth = maxWidth - this.evData.rightPadding;
+        newHeight = newWidth / this.aspect;
+        newX = 0;
+      }
+      if (newHeight + this.evData.childrenStartY >= maxHeight) {
+        newHeight = maxHeight - this.evData.childrenStartY;
+        newWidth = newHeight * this.aspect;
+        newX = maxWidth - this.evData.rightPadding - newWidth;
+      }
+    }
+
+    // 右上角
+    if (!this.xInversed && this.yInversed) {
+      if (newWidth + this.evData.childrenStartX >= maxWidth) {
+        newWidth = maxWidth - this.evData.childrenStartX;
+        newHeight = newWidth / this.aspect;
+        newY = maxHeight - this.evData.bottomPadding - newHeight;
+      }
+
+      if (newHeight + this.evData.bottomPadding >= maxHeight) {
+        newHeight = maxHeight - this.evData.bottomPadding;
+        newWidth = newHeight * this.aspect;
+        newY = 0;
+      }
+    }
+    
+    // 左上角
+    if (this.xInversed && this.yInversed) {
+      if (newX <= 0) {
+        newX = 0;
+        newWidth = maxWidth - this.evData.rightPadding;
+        newHeight = newWidth / this.aspect;
+        newY = maxHeight - newHeight - this.evData.bottomPadding;
+      }
+      if (newY <= 0) {
+        newY = 0;
+        newHeight = maxHeight - this.evData.bottomPadding;
+        newWidth = newHeight * this.aspect;
+        newX = maxWidth - newWidth - this.evData.rightPadding;
+      }
+    }
+
     return {
       ...rectbound,
       x: newX,

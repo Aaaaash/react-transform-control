@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import InputLabel from './InputLabel';
 
 const Text = styled.div`
-  min-height: 38px;
+  /* min-height: 38px; */
+  height: 100%;
   font-size: 20px;
   line-height: 38px;
   color: #FFFFFF;

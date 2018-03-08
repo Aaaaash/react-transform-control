@@ -52,6 +52,8 @@ class App extends PureComponent {
           onClick={() => {
             this.setState({ edit: true });
           }}
+          maxWidth={533}
+          maxHeight={300}
           innerRef={(ref: any) => (this.control = ref)}
           disabled={!this.state.edit}
         >
