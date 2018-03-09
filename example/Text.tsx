@@ -11,6 +11,7 @@ const Text = styled.div`
   width: 100%;
   text-align: center;
   outline: none;
+  white-space: nowrap;
   background-color: rgba(0,0,0,0.65);
 `;
 

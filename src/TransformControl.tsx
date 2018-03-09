@@ -99,10 +99,11 @@ class TransformControl extends PureComponent<IProps, IState> {
   }
 
   initialComponentRect = () => {
-    const { width, height } = this.componentElement.getBoundingClientRect();
+    const { width, height, left, top } = this.componentElement.getBoundingClientRect();
     this.containerWidth = width;
     this.containerHeight = height;
     this.aspect = width / height;
+    return {left, top};
   };
 
   /**
@@ -134,14 +135,16 @@ class TransformControl extends PureComponent<IProps, IState> {
   };
 
   initialEvData = (e: any) => {
-    const { rectbound, maxWidth, maxHeight } = this.props;
+    const { rectbound, maxWidth, maxHeight, deg } = this.props;
     const clientPos = getClientPos(e);
-    this.initialComponentRect();
+    const { left, top } = this.initialComponentRect();
+    console.log(left, top);
+    console.log(rectbound);
     this.evData = {
       dragStartMouseX: clientPos.x,
       dragStartMouseY: clientPos.y,
-      childrenStartX: rectbound.x,
-      childrenStartY: rectbound.y,
+      childrenStartX: left - this.parentRectBound.x,
+      childrenStartY: top - this.parentRectBound.y,
       childrenStartW: this.containerWidth,
       childrenStartH: this.containerHeight,
       rightPadding: maxWidth - this.containerWidth - rectbound.x,
@@ -228,6 +231,9 @@ class TransformControl extends PureComponent<IProps, IState> {
     const { evData, parentRectBound } = this;
     const x = evData.diffX + evData.childrenStartX;
     const y = evData.diffY + evData.childrenStartY;
+    console.log(x, y);
+    console.log(parentRectBound.w, parentRectBound.h);
+    console.log(this.containerWidth, this.containerHeight);
     const nextRectBound = {
       ...rectbound,
       x:
@@ -347,11 +353,13 @@ class TransformControl extends PureComponent<IProps, IState> {
 
   mergeStyles = (rectbound: RectBound): object => {
     const { w, h, x, y } = rectbound;
+    const { deg } = this.props;
     return {
       width: w,
       height: h,
       left: `${x}px`,
-      top: `${y}px`
+      top: `${y}px`,
+      transform: `rotate(${deg}deg)`,
     };
   };
 
