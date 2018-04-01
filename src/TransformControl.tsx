@@ -98,6 +98,15 @@ class TransformControl extends PureComponent<IProps, IState> {
     };
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.onDocMouseTouchMove);
+    document.removeEventListener('touchmove', this.onDocMouseTouchMove);
+
+    document.removeEventListener('mouseup', this.onDocMouseTouchEnd);
+    document.removeEventListener('touchend', this.onDocMouseTouchEnd);
+    document.removeEventListener('touchcancel', this.onDocMouseTouchEnd);
+  }
+
   initialComponentRect = () => {
     const { width, height, left, top } = this.componentElement.getBoundingClientRect();
     this.containerWidth = width;
